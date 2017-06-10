@@ -1,0 +1,9 @@
+{
+  "name": "open_phil_grants_visualizer",
+  "version": "0.0.1",
+  "description": "A data visualization of the Open Philanthropy Project's Grants Database",
+  "main": "index.js",
+  "repository": "git@github.com:jayqui/open_phil_grants_visualizer.git",
+  "author": "Jay Quigley <jay@coverhound.com>",
+  "license": "MIT"
+}
