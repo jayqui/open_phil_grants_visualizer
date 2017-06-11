@@ -1,10 +1,8 @@
-// Takes in array of grant objects and pie name and makes a pie!
-// Originally for intra cause use
 import * as d3 from 'd3';
 
-export default function (name, grantObjArr) {
-  appendDiv(name, function() {
-    var svg = d3.select("#" + name).append("svg:svg"),
+export default function (id, grantGroup) {
+  appendDiv(id, function() {
+    var svg = d3.select("#" + id).append("svg:svg"),
         width = 700,
         height = 700,
         radius = Math.min(width, height) / 2,
@@ -16,7 +14,7 @@ export default function (name, grantObjArr) {
           .sort(null)
           .value((d) => d["Grant Amount"])
 
-    var color = d3.scaleOrdinal(nRandomColors(grantObjArr.length));
+    var color = d3.scaleOrdinal(nRandomColors(grantGroup.length));
 
     var path = d3.arc()
           .outerRadius(radius - 10)
@@ -27,19 +25,19 @@ export default function (name, grantObjArr) {
           .innerRadius(radius - 40)
 
     var arc = g.selectAll(".arc")
-          .data(pie(grantObjArr))
+          .data(pie(grantGroup))
           .enter()
             .append("g")
-            .attr("class", "arc-" + name)
+            .attr("class", "arc-" + id)
 
     arc.append("path")
       .attr("d", path)
       .attr("fill", (d, i) => color(i))
 
     arc.append("text")
-      .data(pie(grantObjArr))
+      .data(pie(grantGroup))
       .attr("transform", (d) => "translate(" + label.centroid(d) + ")")
-      .text(d => d.data["Organization Name"] + ", $" + d.data["Grant Amount"])
+      .text(d => d.data["Organization id"] + ", $" + d.data["Grant Amount"])
   });
 }
 
@@ -65,13 +63,13 @@ function nRandomColors(n) {
   return colors;
 }
 
-function appendDiv(name, cb) {
+function appendDiv(id, cb) {
   var div = document.createElement("div");
-  div.id = name;
+  div.id = id;
   div.class = "Pie Chart";
   document.body.appendChild(div);
 
-  if(document.getElementById(name)) {
+  if(document.getElementById(id)) {
     return cb();
   } else {
     throw Error;
