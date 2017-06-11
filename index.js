@@ -16,17 +16,11 @@ function listDataByFocusArea(dataByFocusArea) {
 
     const grantGroup = dataByFocusArea[focusArea];
     listDataInGrantGroup(grantGroup);
-  })
-}
-
-function drawPies(dataByFocusArea) {
-  Object.keys(dataByFocusArea).forEach(focusArea => {
-    let id = focusArea.replace(/\W|\s/g, "");
 
     grantGroup.forEach(grant =>
       grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
     );
-
+    let id = focusArea.replace(/\W|\s/g, "");
     drawPie(id, grantGroup);
   })
 }
