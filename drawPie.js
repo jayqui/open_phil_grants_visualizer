@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 
 export default function (id, grantGroup) {
-  appendDiv(id, function() {
+  appendDiv(id, function () {
     var svg = d3.select("#" + id).append("svg:svg"),
         width = 700,
         height = 700,
@@ -9,7 +9,7 @@ export default function (id, grantGroup) {
         g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
     svg.attr("width", width).attr("height", height);
-
+    
     var pie = d3.pie()
           .sort(null)
           .value((d) => d["Grant Amount"])
