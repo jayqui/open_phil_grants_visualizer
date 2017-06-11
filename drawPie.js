@@ -2,51 +2,44 @@
 // Originally for intra cause use
 import * as d3 from 'd3';
 
-export default async function (name, grantObjArr) {
-  try {
-    await appendDiv(name);
-  } catch (error) {
-    try {
-      await appendDiv(name);
-    } catch (error) {
-      console.log("appendDiv Failed Twice:");
-      console.log(error);
-    }
-  }
+export default function (name, grantObjArr) {
+  appendDiv(name, function() {
+    var svg = d3.select("#" + name).append("svg:svg"),
+        width = 500,
+        height = 500,
+        radius = Math.min(width, height) / 2,
+        g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-  var svg = d3.select(name),
-      width = 100,
-      height = 100,
-      radius = Math.min(width, height) / 2,
-      g = svg.append("g").attr("transform", "translate(" + width / 2, height / 2 + ")");
+    svg.attr("width", width).attr("height", height);
 
-  var pie = d3.pie()
-        .sort(null)
-        .value((d) => d["Grant Amount"])
+    var pie = d3.pie()
+          .sort(null)
+          .value((d) => d["Grant Amount"])
 
-  var color = d3.scaleOrdinal(nRandomColors(grantObjArr.length));
+    var color = d3.scaleOrdinal(nRandomColors(grantObjArr.length));
 
-  var path = d3.arc()
-        .outerRadius(radius - 10)
-        .innerRadius(0)
+    var path = d3.arc()
+          .outerRadius(radius - 10)
+          .innerRadius(0)
 
-  var label = d3.arc()
-        .outerRadius(radius - 40)
-        .innerRadius(radius - 40)
+    var label = d3.arc()
+          .outerRadius(radius - 40)
+          .innerRadius(radius - 40)
 
-  var arc = g.selectAll(".arc")
-        .data(pie(grantObjArr))
-        .enter()
-          .append("g")
-          .attr("class", "arc-" + name)
+    var arc = g.selectAll(".arc")
+          .data(pie(grantObjArr))
+          .enter()
+            .append("g")
+            .attr("class", "arc-" + name)
 
-  arc.append("path")
-    .attr("d", path)
-    .attr("fill", d => color(d))
+    arc.append("path")
+      .attr("d", path)
+      .attr("fill", d => color(d))
 
-  arc.append("text")
-    .attr("transform", (d) => "translate(" + label.centroid(d) + ")")
-    .text(d => d["Organization Name"])
+    arc.append("text")
+      .attr("transform", (d) => "translate(" + label.centroid(d) + ")")
+      .text(d => d["Organization Name"])
+  });
 }
 
 function randomColor() {
@@ -67,18 +60,18 @@ function nRandomColors(n) {
   for(let i = 0; i < n; i++) {
     colors.push(randomColor());
   }
-  console.log(colors)
+
   return colors;
 }
 
-function appendDiv(name) {
+function appendDiv(name, cb) {
   var div = document.createElement("div");
   div.id = name;
   div.class = "Pie Chart";
   document.body.appendChild(div);
 
   if(document.getElementById(name)) {
-    return true;
+    return cb();
   } else {
     throw Error;
   }
