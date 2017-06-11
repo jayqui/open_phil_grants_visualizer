@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import drawPie from './pie';
+import drawPie from './drawPie';
 
 d3.csv('databasexls.csv', function(data) {
   data.forEach((datum, index) => {
