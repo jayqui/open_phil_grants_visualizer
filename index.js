@@ -1,15 +1,21 @@
 import * as d3 from 'd3';
+import drawPie from './pie';
 
 d3.csv('databasexls.csv', function(data) {
   data.forEach((datum, index) => {
     let paragraph = document.createElement('p');
     paragraph.textContent = `${index + 1}) ${datum.Grant} | ${datum["Grant Amount"]}`;
     document.body.appendChild(paragraph);
-    console.log(datum["Grant Amount"])
     datum["Grant Amount"] = parseInt(datum["Grant Amount"].replace(/\D/g, ""));
-    console.log(datum["Grant Amount"])
     FOCUS_AREA_MAPPING[datum["Focus Area"]].push(datum);
   });
+
+  for (let key in FOCUS_AREA_MAPPING) {
+    let grantObjArr = FOCUS_AREA_MAPPING[key],
+        name = key.replace(/\W\s/g, "");
+
+    drawPie(name, grantObjArr);
+  }
 });
 
 const GLOBAL_HEALTH = [];
