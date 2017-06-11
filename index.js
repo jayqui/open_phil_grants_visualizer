@@ -7,6 +7,7 @@ d3.csv('databasexls.csv', function(data) {
   const dataByFocusArea = _.groupBy(data, 'Focus Area');
 
   listDataByFocusArea(dataByFocusArea);
+  drawPies(dataByFocusArea);
 });
 
 function listDataByFocusArea(dataByFocusArea) {
@@ -20,6 +21,18 @@ function listDataByFocusArea(dataByFocusArea) {
       grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
     );
     let id = focusArea.replace(/\W|\s/g, "");
+    drawPie(id, grantGroup);
+  })
+}
+
+function drawPies(dataByFocusArea) {
+  Object.keys(dataByFocusArea).forEach(focusArea => {
+    let id = focusArea.replace(/\W|\s/g, "");
+
+    grantGroup.forEach(grant =>
+      grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
+    );
+
     drawPie(id, grantGroup);
   })
 }
