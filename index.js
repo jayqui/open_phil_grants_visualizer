@@ -14,7 +14,7 @@ function listDataByFocusArea(dataByFocusArea) {
     appendNewElement(textElement('h1', focusArea));
 
     const grantGroup = dataByFocusArea[focusArea];
-    listDataInGrantGroup(grantGroup);
+    // listDataInGrantGroup(grantGroup);
 
     grantGroup.forEach(grant =>
       grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
@@ -36,11 +36,11 @@ function drawPies(dataByFocusArea) {
   })
 }
 
-function listDataInGrantGroup(grantGroup) {
-  grantGroup.forEach((grantData, index) => {
-    appendNewElement(textElement('p', grantText(grantData, index)));
-  });
-}
+// function listDataInGrantGroup(grantGroup) {
+//   grantGroup.forEach((grantData, index) => {
+//     appendNewElement(textElement('p', grantText(grantData, index)));
+//   });
+// }
 
 function textElement(htmlTag, text) {
   let newElement = document.createElement(htmlTag)

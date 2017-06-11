@@ -37,20 +37,20 @@ export default function (id, grantGroup) {
     arc.append("text")
       .data(pie(grantGroup))
       .attr("transform", (d) => "translate(" + label.centroid(d) + ")")
-      .text(d => d.data["Organization id"] + ", $" + d.data["Grant Amount"])
+      .text(d => d.data["Organization Name"] + ", $" + d.data["Grant Amount"].toLocaleString())
   });
 }
 
 function randomColor() {
-  const ColorStr = ["#"];
+  let colorStr = "#";
   const CHARS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
 
   for(let i = 0; i < 6; i++) {
     let randIdx = Math.floor(Math.random() * CHARS.length);
-    ColorStr.push(CHARS[randIdx]);
+    colorStr += CHARS[randIdx];
   }
 
-  return ColorStr.join("");
+  return colorStr;
 }
 
 function nRandomColors(n) {
@@ -63,14 +63,14 @@ function nRandomColors(n) {
   return colors;
 }
 
-function appendDiv(id, cb) {
+function appendDiv(id, callback) {
   var div = document.createElement("div");
   div.id = id;
   div.class = "pie-chart";
   document.body.appendChild(div);
 
   if(document.getElementById(id)) {
-    return cb();
+    return callback();
   } else {
     throw Error;
   }
