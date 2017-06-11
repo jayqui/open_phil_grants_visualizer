@@ -24,6 +24,8 @@ export default async function (name, grantObjArr) {
         .sort(null)
         .value((d) => d["Grant Amount"])
 
+  var color = d3.scaleOrdinal(nRandomColors(grantObjArr.length));
+
   var path = d3.arc()
         .outerRadius(radius - 10)
         .innerRadius(0)
@@ -40,7 +42,7 @@ export default async function (name, grantObjArr) {
 
   arc.append("path")
     .attr("d", path)
-    .attr("fill", () => randomColor())
+    .attr("fill", d => color(d))
 
   arc.append("text")
     .attr("transform", (d) => "translate(" + label.centroid(d) + ")")
@@ -57,6 +59,16 @@ function randomColor() {
   }
 
   return ColorStr.join("");
+}
+
+function nRandomColors(n) {
+  const colors = [];
+
+  for(let i = 0; i < n; i++) {
+    colors.push(randomColor());
+  }
+  console.log(colors)
+  return colors;
 }
 
 function appendDiv(name) {
