@@ -12,7 +12,7 @@ d3.csv('databasexls.csv', function(data) {
 
   for (let key in FOCUS_AREA_MAPPING) {
     let grantObjArr = FOCUS_AREA_MAPPING[key],
-        name = key.replace(/\W\s/g, "");
+        name = key.replace(/\W|\s/g, "");
 
     drawPie(name, grantObjArr);
   }
