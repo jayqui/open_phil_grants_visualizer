@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
 import _ from 'lodash';
 
+import drawPie from './drawPie';
+
 d3.csv('databasexls.csv', function(data) {
   const dataByFocusArea = _.groupBy(data, 'Focus Area');
 
@@ -13,6 +15,24 @@ function listDataByFocusArea(dataByFocusArea) {
 
     const grantGroup = dataByFocusArea[focusArea];
     listDataInGrantGroup(grantGroup);
+
+    grantGroup.forEach(grant =>
+      grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
+    );
+    let id = focusArea.replace(/\W|\s/g, "");
+    drawPie(id, grantGroup);
+  })
+}
+
+function drawPies(dataByFocusArea) {
+  Object.keys(dataByFocusArea).forEach(focusArea => {
+    let id = focusArea.replace(/\W|\s/g, "");
+
+    grantGroup.forEach(grant =>
+      grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
+    );
+
+    drawPie(id, grantGroup);
   })
 }
 
