@@ -9,7 +9,7 @@ export default function (id, grantGroup) {
         g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
     svg.attr("width", width).attr("height", height);
-    
+
     var pie = d3.pie()
           .sort(null)
           .value((d) => d["Grant Amount"])
