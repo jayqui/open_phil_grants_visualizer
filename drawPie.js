@@ -3,6 +3,19 @@
     animate slice selection,
     add links
     style
+
+    Object {Grant: "Target Malaria - General Support",
+    URL: "http://www.openphilanthropy.org/focus/scientific-r…arch/miscellaneous/target-malaria-general-support",
+    Organization Name: "Target Malaria", Organization Website: "http://targetmalaria.org/",
+    Focus Area: "Scientific Research"…}
+    Date: "17-May"
+    Focus Area: "Scientific Research"
+    Focus Area URL: "http://www.openphilanthropy.org/focus/scientific-research"
+    Grant: "Target Malaria - General Support"
+    Grant Amount: 17500000
+    Organization Name: "Target Malaria"
+    Organization Website: "http://targetmalaria.org/"
+    URL: "http://www.openphilanthropy.org/focus/scientific-research/miscellaneous/target-malaria-general-support"__proto__: Object
 */
 
 
@@ -14,12 +27,12 @@ export default function (id, grantGroup) {
     let sum = grantGroup.reduce((s, g) => s + g['Grant Amount'], 0),
         svg = d3.select("#" + id).append("svg:svg"),
         margin = {top: 50, right: 50, bottom: 50, left: 50},
-        width = 500 + Math.pow(Math.log(sum , 2), 2) - margin.left,
-        height = 500 + Math.pow(Math.log(sum, 2), 2) - margin.top,
+        width = 700 - margin.left,
+        height = 700 - margin.top,
         radius = Math.min(width, height) / 2,
         g = svg.append("g").attr("transform", "translate(" +
-                                  width / 2 + margin.left + "," +
-                                  height / 2 +  margin.top + ")"
+                                  width / 2 + "," +
+                                  height / 2 + ")"
                                 );
 
     svg.attr("width", width).attr("height", height);
@@ -47,14 +60,14 @@ export default function (id, grantGroup) {
 
     // Draw curve in circle
     let nameCurve = arc.append("path")
-      .attr("transform", () => `translate(${-width / 8.25},${-height / 8})`)
+      .attr("transform", () => `translate(${-width / 7},${-height / 7})`)
       .attr("id", `OrgNameCurve-${grantGroup[0]["Focus Area"]}`)
       .attr("d", "M10 80 Q 95 10 180 80")
       .style("fill", "none")
       .style("stroke", "0")
 
     let amountCurve = arc.append("path")
-      .attr("transform", () => `translate(${-width / 8.25},${-height / 12})`)
+      .attr("transform", () => `translate(${-width / 7},${-height / 12})`)
       .attr("id", `AmountCurve-${grantGroup[0]["Focus Area"]}`)
       .attr("d", "M10 80 Q 95 170 180 80")
       .style("fill", "none")
@@ -75,9 +88,29 @@ export default function (id, grantGroup) {
       .attr("fill", (d, i) => color(i))
       .style("display", "none")
       .style("text-anchor","middle") //place the text halfway on the arc
-      .text(d => `${parseOrgName(d.data["Organization Name"])}`)
+      .html(d => `
+        <a href="${d.data["Organization Website"]}">
+        ${parseOrgName(d.data["Organization Name"])}
+        </a>
+      `)
       .on("mouseover", (d) => toggleOrgNameTooltip(id, d))
       .on("mouseout", (d) => toggleOrgNameTooltip(id, d))
+
+    // Append date to curve
+    // arc.append("text")
+    //   .append("textPath")
+    //   .data(pie(grantGroup))
+    //   .attr("xlink:href", (d) => `#OrgNameCurve-${d.data["Focus Area"]}`)
+    //   .attr("id", (d) => id + "-text-" + d.data["Date"].toLocaleString().replace(/\W|\s/g, ""))
+    //   .attr("startOffset", "50%")
+    //   .attr("fill", (d, i) => color(i))
+    //   .attr("transform", () => `translate(${100},${100})`)
+    //   .style("display", "none")
+    //   .style("text-anchor","middle") //place the text halfway on the arc
+    //   .text(d => `${d.data["Date"]}`)
+    //   .on("mouseover", (d) => toggleOrgNameTooltip(id, d))
+    //   .on("mouseout", (d) => toggleOrgNameTooltip(id, d))
+
 
     // Append grantAmount
     arc.append("text")
@@ -91,7 +124,10 @@ export default function (id, grantGroup) {
       .style("display", "none")
       .style("height", "100")
       .html(d => {
-        return `$${d.data["Grant Amount"].toLocaleString()}`
+        return `
+        <a href="${d.data["URL"]}">
+          $${d.data["Grant Amount"].toLocaleString()}
+        </a>`
       })
 
     // Draw org name tooltips
@@ -132,6 +168,12 @@ export default function (id, grantGroup) {
       .on("mouseleave", function(d) {
         selectedSlice = undefined;
       })
+      .html(d => {
+        return `
+        <a href="${d.data["URL"]}">
+          $${d.data["Grant Amount"].toLocaleString()}
+        </a>`
+      })
 
     function resetOtherSlices(id, selectedId) {
       let arcs = d3.selectAll(`.arc-${id}`)
@@ -148,7 +190,8 @@ export default function (id, grantGroup) {
 
     function centerText(id, d,i) {
       let text = d3.select("#" + id + "-text-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
-          amount = d3.select("#" + id + "-amount-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""));
+          amount = d3.select("#" + id + "-amount-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
+          date = d3.select("#" + id + "-text-" + d.data["Date"].toLocaleString().replace(/\W|\s/g, ""));
 
       if(!selectedSliceName || text.attr("id") !== selectedSliceName.attr("id")) {
         if(selectedSliceName) selectedSliceName.style("display", "none");
