@@ -1,8 +1,16 @@
+/**
+  Todo:
+    animate slice selection,
+    add links
+    style
+*/
+
+
 import * as d3 from 'd3';
 
 export default function (id, grantGroup) {
   appendDiv(id, function () {
-    let selectedSliceText;
+    let selectedSliceName, selectedSliceAmount;
     let sum = grantGroup.reduce((s, g) => s + g['Grant Amount'], 0),
         svg = d3.select("#" + id).append("svg:svg"),
         margin = {top: 50, right: 50, bottom: 50, left: 50},
@@ -37,37 +45,94 @@ export default function (id, grantGroup) {
             .append("g")
             .attr("class", "arc-" + id)
 
-    // New plan: fit grant description, title and links in the center of the pie chart
-    arc.append("text")
-      .data(pie(grantGroup))
-      .attr("transform", (d) => {
-        let center = path.centroid(d),
-            x = center[0],
-            y = center[1],
-            h = Math.sqrt(x * x + y * y);
+    // Draw curve in circle
+    let nameCurve = arc.append("path")
+      .attr("transform", () => `translate(${-width / 8.25},${-height / 8})`)
+      .attr("id", `OrgNameCurve-${grantGroup[0]["Focus Area"]}`)
+      .attr("d", "M10 80 Q 95 10 180 80")
+      .style("fill", "none")
+      .style("stroke", "0")
 
-        return "translate(" + Math.floor((x / h)) + 30 + "," +
-                              Math.floor((y / h)) + ")";
-      })
+    let amountCurve = arc.append("path")
+      .attr("transform", () => `translate(${-width / 8.25},${-height / 12})`)
+      .attr("id", `AmountCurve-${grantGroup[0]["Focus Area"]}`)
+      .attr("d", "M10 80 Q 95 170 180 80")
+      .style("fill", "none")
+      // .style("stroke", "line")
+
+    let centerPath = arc.append("path")
+        .attr("id", `CenterPath-${grantGroup[0]["Focus Area"]}`)
+        .attr("d", `M ${-width} 0 Q ${-width} 0 ${width} 0`)
+        .style("stroke", "none")
+
+    // Attach grant name to curve
+    arc.append("text")
+      .append("textPath")
+      .data(pie(grantGroup))
+      .attr("xlink:href", (d) => `#OrgNameCurve-${d.data["Focus Area"]}`)
       .attr("id", (d) => id + "-text-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
+      .attr("startOffset", "50%")
+      .attr("fill", (d, i) => color(i))
       .style("display", "none")
-      .html(d => d.data["Organization Name"].toLocaleString())
+      .style("text-anchor","middle") //place the text halfway on the arc
+      .text(d => `${parseOrgName(d.data["Organization Name"])}`)
+      .on("mouseover", (d) => toggleOrgNameTooltip(id, d))
+      .on("mouseout", (d) => toggleOrgNameTooltip(id, d))
+
+    // Append grantAmount
+    arc.append("text")
+      .append("textPath")
+      .data(pie(grantGroup))
+      .attr("xlink:href", (d) => `#AmountCurve-${d.data["Focus Area"]}`)
+      .attr("fill", (d, i) => color(i))
+      .attr("id", (d) => id + "-amount-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
+      .attr("startOffset", "50%")
+      .style("text-anchor","middle") //place the text halfway on the arc
+      .style("display", "none")
+      .style("height", "100")
+      .html(d => {
+        return `$${d.data["Grant Amount"].toLocaleString()}`
+      })
+
+    // Draw org name tooltips
+    arc
+     .data(pie(grantGroup))
+     .append("text")
+     .append("textPath")
+     .attr("xlink:href", (d) => `#CenterPath-${d.data["Focus Area"]}`)
+     .attr("id", (d) => id + "-tooltip-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
+     .attr("fill", (d, i) => color(i))
+     .attr("startOffset", "50%")
+     .style("display", "none")
+     .style("text-anchor","middle")
+     .text((d) => {
+       if(d.data["Organization Name"].length > 27) {
+        return d.data["Organization Name"]
+      } else {
+        return "";
+      }
+     })
 
     arc.append("path")
       .attr("d", path)
       .attr("fill", (d, i) => color(i))
-      .on("mouseover", (d, i) => centerText(d, i))
+      .on("mouseover", (d, i) => centerText(id, d, i))
 
-    function centerText(d,i) {
-      let text = d3.select("#" + id + "-text-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""));
 
-      if(!selectedSliceText || text.attr("id") !== selectedSliceText.attr("id")) {
-        if(selectedSliceText) selectedSliceText.style("display", "none");
+    function centerText(id, d,i) {
+      let text = d3.select("#" + id + "-text-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
+          amount = d3.select("#" + id + "-amount-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""));
+
+      if(!selectedSliceName || text.attr("id") !== selectedSliceName.attr("id")) {
+        if(selectedSliceName) selectedSliceName.style("display", "none");
+        if(selectedSliceAmount) selectedSliceAmount.style("display", "none");
+
         text.style("display", "block");
-        selectedSliceText = text;
+        amount.style("display", "block");
+        selectedSliceName = text;
+        selectedSliceAmount = amount;
       }
     }
-
   });
 }
 
@@ -93,6 +158,43 @@ function nRandomColors(n) {
   return colors;
 }
 
+/**
+  Helper methods
+*/
+
+// Try this instead: https://bl.ocks.org/mbostock/7555321
+function orgFontSize(name) {
+  let sizeDiff = name.length - 30 > 0 ? name.length - 30 : 0;
+
+  if(sizeDiff === 0) return "16px";
+
+  let timesDecrement = Math.ceil(sizeDiff / 8),
+      size = 16 - (timesDecrement * 1);
+
+  return size + "px";
+}
+
+function parseOrgName(name) {
+  if(name.length > 27) {
+    let parsedName = [],
+        splitName = name.split(" ");
+
+    if(["A", "An", "The", "Of"].indexOf(splitName[0]) != -1) {
+      splitName.shift();
+    }
+
+    for(let i = 0; i < splitName.length; i++) {
+      let word = splitName[i];
+
+      if(word[0] && word[0] === word[0].toUpperCase()) parsedName.push(word[0]);
+    }
+
+    return parsedName.join(" ");
+  }
+
+  return name;
+}
+
 function appendDiv(id, callback) {
   var div = document.createElement("div");
   div.id = id;
@@ -103,5 +205,16 @@ function appendDiv(id, callback) {
     return callback();
   } else {
     throw Error;
+  }
+}
+
+function toggleOrgNameTooltip(id, d) {
+  let tooltipId = id + "-tooltip-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""),
+      tooltip = d3.selectAll("#" + tooltipId);
+
+  if(tooltip.style("display") === "none") {
+    tooltip.style("display", "block");
+  } else {
+    tooltip.style("display", "none");
   }
 }
