@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 
 export default function (id, grantGroup) {
   appendDiv(id, function () {
-    let selectedSliceName, selectedSliceAmount;
+    let selectedSlice, selectedSliceName, selectedSliceAmount;
     let sum = grantGroup.reduce((s, g) => s + g['Grant Amount'], 0),
         svg = d3.select("#" + id).append("svg:svg"),
         margin = {top: 50, right: 50, bottom: 50, left: 50},
@@ -113,11 +113,38 @@ export default function (id, grantGroup) {
       }
      })
 
+    // Draw arcs
     arc.append("path")
       .attr("d", path)
+      .attr("id", (d, i) => `arc-${id}-${i}`)
       .attr("fill", (d, i) => color(i))
       .on("mouseover", (d, i) => centerText(id, d, i))
+      .on("mouseenter", function(d, i) {
+        selectedSlice = d3.select(this);
 
+        resetOtherSlices(id, i)
+
+        selectedSlice
+          .transition()
+          .duration(1000)
+          .attr("d", path.outerRadius(radius - 45))
+      })
+      .on("mouseleave", function(d) {
+        selectedSlice = undefined;
+      })
+
+    function resetOtherSlices(id, selectedId) {
+      let arcs = d3.selectAll(`.arc-${id}`)
+      for(let i = 0; i <  arcs.nodes().length; i++) {
+        if(selectedId === i) continue;
+        let node = d3.select(`#arc-${id}-${i}`);
+
+        node
+          .transition()
+          .duration(1000)
+          .attr("d", path.outerRadius(radius - 60));
+      }
+    }
 
     function centerText(id, d,i) {
       let text = d3.select("#" + id + "-text-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
