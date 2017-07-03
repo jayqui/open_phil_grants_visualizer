@@ -22,7 +22,10 @@
 import * as d3 from 'd3';
 
 export default function (id, grantGroup) {
-  appendDiv(id, function () {
+  appendCard(id,
+             grantGroup[0]["Focus Area URL"],
+             grantGroup[0]["Focus Area"],
+  function () {
     let selectedSlice, selectedSliceName, selectedSliceAmount;
     let sum = grantGroup.reduce((s, g) => s + g['Grant Amount'], 0),
         svg = d3.select("#" + id).append("svg:svg"),
@@ -71,7 +74,6 @@ export default function (id, grantGroup) {
       .attr("id", `AmountCurve-${grantGroup[0]["Focus Area"]}`)
       .attr("d", "M10 80 Q 95 170 180 80")
       .style("fill", "none")
-      // .style("stroke", "line")
 
     let centerPath = arc.append("path")
         .attr("id", `CenterPath-${grantGroup[0]["Focus Area"]}`)
@@ -83,11 +85,12 @@ export default function (id, grantGroup) {
       .append("textPath")
       .data(pie(grantGroup))
       .attr("xlink:href", (d) => `#OrgNameCurve-${d.data["Focus Area"]}`)
-      .attr("id", (d) => id + "-text-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
+      .attr("id", (d) => "name" + id + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
       .attr("startOffset", "50%")
       .attr("fill", (d, i) => color(i))
       .style("display", "none")
       .style("text-anchor","middle") //place the text halfway on the arc
+      .style("color", (d, i) => color(i))
       .html(d => `
         <a href="${d.data["Organization Website"]}">
         ${parseOrgName(d.data["Organization Name"])}
@@ -101,7 +104,7 @@ export default function (id, grantGroup) {
     //   .append("textPath")
     //   .data(pie(grantGroup))
     //   .attr("xlink:href", (d) => `#OrgNameCurve-${d.data["Focus Area"]}`)
-    //   .attr("id", (d) => id + "-text-" + d.data["Date"].toLocaleString().replace(/\W|\s/g, ""))
+    //   .attr("id", (d) => "name" + id + d.data["Date"].toLocaleString().replace(/\W|\s/g, ""))
     //   .attr("startOffset", "50%")
     //   .attr("fill", (d, i) => color(i))
     //   .attr("transform", () => `translate(${100},${100})`)
@@ -117,9 +120,9 @@ export default function (id, grantGroup) {
       .append("textPath")
       .data(pie(grantGroup))
       .attr("xlink:href", (d) => `#AmountCurve-${d.data["Focus Area"]}`)
-      .attr("fill", (d, i) => color(i))
-      .attr("id", (d) => id + "-amount-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
+      .attr("id", (d) => "amount-" + id + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
       .attr("startOffset", "50%")
+      .attr("fill", (d, i) => color(i))
       .style("text-anchor","middle") //place the text halfway on the arc
       .style("display", "none")
       .style("height", "100")
@@ -129,6 +132,7 @@ export default function (id, grantGroup) {
           $${d.data["Grant Amount"].toLocaleString()}
         </a>`
       })
+      .style("color", (d, i) => color(i) )
 
     // Draw org name tooltips
     arc
@@ -136,14 +140,14 @@ export default function (id, grantGroup) {
      .append("text")
      .append("textPath")
      .attr("xlink:href", (d) => `#CenterPath-${d.data["Focus Area"]}`)
-     .attr("id", (d) => id + "-tooltip-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
+     .attr("id", (d) => "tooltip" + id + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""))
      .attr("fill", (d, i) => color(i))
      .attr("startOffset", "50%")
      .style("display", "none")
      .style("text-anchor","middle")
      .text((d) => {
        if(d.data["Organization Name"].length > 27) {
-        return d.data["Organization Name"]
+        return `(${d.data["Organization Name"]})`
       } else {
         return "";
       }
@@ -189,9 +193,9 @@ export default function (id, grantGroup) {
     }
 
     function centerText(id, d,i) {
-      let text = d3.select("#" + id + "-text-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
-          amount = d3.select("#" + id + "-amount-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
-          date = d3.select("#" + id + "-text-" + d.data["Date"].toLocaleString().replace(/\W|\s/g, ""));
+      let text = d3.select("#" + "name" + id + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
+          amount = d3.select("#" + "amount-" + id + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, "")),
+          date = d3.select("#" + "name" + id + d.data["Date"].toLocaleString().replace(/\W|\s/g, ""));
 
       if(!selectedSliceName || text.attr("id") !== selectedSliceName.attr("id")) {
         if(selectedSliceName) selectedSliceName.style("display", "none");
@@ -265,11 +269,12 @@ function parseOrgName(name) {
   return name;
 }
 
-function appendDiv(id, callback) {
+function appendCard(id, url, focusArea, callback) {
+  createCard(id, url, focusArea);
   var div = document.createElement("div");
   div.id = id;
   div.class = "pie-chart";
-  document.body.appendChild(div);
+  document.getElementById(`${id}-card`).appendChild(div);
 
   if(document.getElementById(id)) {
     return callback();
@@ -279,7 +284,7 @@ function appendDiv(id, callback) {
 }
 
 function toggleOrgNameTooltip(id, d) {
-  let tooltipId = id + "-tooltip-" + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""),
+  let tooltipId = "tooltip" + id + d.data["Organization Name"].toLocaleString().replace(/\W|\s/g, ""),
       tooltip = d3.selectAll("#" + tooltipId);
 
   if(tooltip.style("display") === "none") {
@@ -287,4 +292,24 @@ function toggleOrgNameTooltip(id, d) {
   } else {
     tooltip.style("display", "none");
   }
+}
+
+function createCard(id, url, focusArea) {
+  let row = document.createElement('div');
+  row.classList.add("row");
+  row.innerHTML = `<div class="col s12 m7">
+    <div class="card">
+      <div class="card-image" id="${id}-card">
+        <span class="card-title">${id}</span>
+      </div>
+      <div class="card-content">
+        <p></p>
+      </div>
+      <div class="card-action">
+        <a href=${url}>Open Phil: ${focusArea}</a>
+      </div>
+    </div>
+  </div>`;
+
+  document.body.appendChild(row)
 }
