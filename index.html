@@ -2,8 +2,51 @@
 <html>
 <head>
   <title>Open Philanthropy Project Grants Vizualizer</title>
+  <link rel="stylesheet" href="stylesheet.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
 </head>
 <body>
+  <nav class="amber lighten-1">
+    <div class="nav-wrapper">
+     <ul id="nav-mobile" class="left hide-on-med-and-down">
+       <li data-activates="slide-out" class="button-collapse"><a href="#"><i class="material-icons">menu</i></a></li>
+     </ul>
+     <a href="#" class="brand-logo">Open Philanthropy Project Grants Vizualizer</a>
+    </div>
+  </nav>
+
+<ul id="slide-out" class="side-nav">
+    <li><div class="user-view">
+      <div class="background">
+      </div>
+
+    </div></li>
+    <li><a href="http://www.openphilanthropy.org/"><i class="material-icons">thumb_up</i>Open Philanthropy Project</a></li>
+    <li><a href="http://www.openphilanthropy.org/giving/grants"><i class="material-icons">cloud</i>Grant Database</a></li>
+    <li><a href="https://github.com/jayqui/open_phil_grants_visualizer"><i class="material-icons">stars</i>Github</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Focus Areas</a></li>
+    <li class=""><a href="#scientificresearch">Scientific Research</a></li>
+    <li class=""><a href="#farmanimalwelfare">Farm Animal Welfare</a></li>
+    <li class=""><a href="#globalcatastrophicrisks">Global Catastrophic Risks</a></li>
+    <li class=""><a href="#potentialrisksfromadvancedartificialintelligence">Advanced Artificial Intelligence</a></li>
+    <li class=""><a href="#criminaljusticereform">Criminal Justice Reform</a></li>
+    <li class=""><a href="#otherareas">Other areas</a></li>
+    <li class=""><a href="#biosecurityandpandemicpreparedness">Biosecurity and Pandemic</a></li>
+    <li class=""><a href="#globalhealthdevelopment">Global Health & Development</a></li>
+    <li class=""><a href="#macroeconomicstabilizationpolicy">Macroeconomic Stabilization Policy</a></li>
+    <li class=""><a href="#landusereform">Land Use Reform</a></li>
+    <li class=""><a href="#immigrationpolicy">Immigration Policy</a></li>
+    <li class=""><a href="#uspolicy">US Policy</a></li>
+    <li class=""><a href="#historyofphilanthropy">History of Philanthropy</a></li>
+  </ul>
+
   <script src="bundle.js"></script>
+  <script type="text/javascript">
+   $(".button-collapse").sideNav();
+  </script>
 </body>
 </html>
