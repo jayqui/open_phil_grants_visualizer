@@ -1,24 +1,3 @@
-/**
-  Todo:
-    animate slice selection,
-    add links
-    style
-
-    Object {Grant: "Target Malaria - General Support",
-    URL: "http://www.openphilanthropy.org/focus/scientific-r…arch/miscellaneous/target-malaria-general-support",
-    Organization Name: "Target Malaria", Organization Website: "http://targetmalaria.org/",
-    Focus Area: "Scientific Research"…}
-    Date: "17-May"
-    Focus Area: "Scientific Research"
-    Focus Area URL: "http://www.openphilanthropy.org/focus/scientific-research"
-    Grant: "Target Malaria - General Support"
-    Grant Amount: 17500000
-    Organization Name: "Target Malaria"
-    Organization Website: "http://targetmalaria.org/"
-    URL: "http://www.openphilanthropy.org/focus/scientific-research/miscellaneous/target-malaria-general-support"__proto__: Object
-*/
-
-
 import * as d3 from 'd3';
 
 export default function (id, grantGroup) {
@@ -236,7 +215,6 @@ function nRandomColors(n) {
   Helper methods
 */
 
-// Try this instead: https://bl.ocks.org/mbostock/7555321
 function orgFontSize(name) {
   let sizeDiff = name.length - 30 > 0 ? name.length - 30 : 0;
 
