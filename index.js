@@ -11,36 +11,47 @@ d3.csv('databasexls.csv', function(data) {
 
 function listDataByFocusArea(dataByFocusArea) {
   Object.keys(dataByFocusArea).forEach((focusArea, index) => {
-    appendNewElement(textElement('h1', focusArea));
+    let id = focusArea.replace(/\W|\s/g, "").toLowerCase(),
+        grantGroup = dataByFocusArea[focusArea];
 
-    const grantGroup = dataByFocusArea[focusArea];
+    grantGroup = deleteUndisclosed(grantGroup);
+
+    appendNewTextElement(textElement('h1', focusArea));
+    appendNewAnchorElement(id);
+
     // listDataInGrantGroup(grantGroup);
 
     grantGroup.forEach(grant =>
       grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
     );
-    let id = focusArea.replace(/\W|\s/g, "");
+
     drawPie(id, grantGroup);
   })
 }
 
-function drawPies(dataByFocusArea) {
-  Object.keys(dataByFocusArea).forEach(focusArea => {
-    let id = focusArea.replace(/\W|\s/g, "");
+function deleteUndisclosed(grantGroup) {
+  const disclosed = [];
 
-    grantGroup.forEach(grant =>
-      grant["Grant Amount"] = parseInt(grant["Grant Amount"].replace(/\D/g, ""))
-    );
+  for(let grant of grantGroup) {
+    if(grant["Grant Amount"]) {
+      disclosed.push(grant);
+    }
+  }
 
-    drawPie(id, grantGroup);
-  })
+  return disclosed;
 }
 
 // function listDataInGrantGroup(grantGroup) {
 //   grantGroup.forEach((grantData, index) => {
-//     appendNewElement(textElement('p', grantText(grantData, index)));
+//     appendNewTextElement(textElement('p', grantText(grantData, index)));
 //   });
 // }
+
+function appendNewAnchorElement(href) {
+  let a = document.createElement("a");
+  a.href = href;
+  document.body.appendChild(a);
+}
 
 function textElement(htmlTag, text) {
   let newElement = document.createElement(htmlTag)
@@ -48,7 +59,7 @@ function textElement(htmlTag, text) {
   return newElement;
 }
 
-function appendNewElement(textElement) {
+function appendNewTextElement(textElement) {
   document.body.appendChild(textElement);
 }
 
