@@ -1,0 +1,12 @@
+.GrantRow {
+  background: #eee;
+  display: inline-block;
+  vertical-align: top;
+  max-width: 300px;
+  margin: 2px;
+  padding: 10px;
+  border: 1px solid #666;
+  border-radius: 20px;
+}
+.GrantRow.odd {
+}
