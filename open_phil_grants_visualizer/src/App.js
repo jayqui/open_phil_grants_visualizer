@@ -6,6 +6,8 @@ import FiltersPanel from './FiltersPanel';
 import SpinnerSection from './SpinnerSection';
 
 import './App.css'
+// BACKUP COPY FOR OFFLINE DEVELOPMENT USE
+// import grantsCsv from './grants_db.csv'
 
 class App extends Component {
   state = {
@@ -13,9 +15,13 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // PRODUCTION PATH (CORS issue in dev)
+    // const grantsDbUrl = 'https://www.openphilanthropy.org/giving/grants/spreadsheet';
     // PROXY PATH FOR DEVLEOPMENT
-    // const grantsDbUrl = 'https://www.openphilanthropy.org/giving/grants/spreadsheet'; // CORS issue in dev
     const grantsDbUrl = '/giving/grants/spreadsheet';
+    // BACKUP COPY FOR OFFLINE DEVELOPMENT USE
+    // const grantsDbUrl = grantsCsv;
+
     d3.csv(grantsDbUrl).then(dirtyData => {
       const data = dirtyData.map((datum => {
         datum['Date'] = this.reformatDate(datum['Date']);
