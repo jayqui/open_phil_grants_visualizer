@@ -15,9 +15,8 @@ class App extends Component {
     this.allData = [];
     this.state = {
       data: [],
-      filters: {}, // { Year: 2017, Organization: 'AI Impacts', ... }
+      filters: {},
     };
-    this.applyFilters = this.applyFilters.bind(this); // TODO: learn whether & why this is necessary
   }
 
   componentDidMount() {
@@ -64,38 +63,24 @@ class App extends Component {
   }
 
   executeFilters = () => {
-    for (key in this.state.filters) {
-      `${filterName.toLowerCase()}Filter`.call();
-    }
+    const filteredData = this.allData.filter(datum => {
+      const chosenYear = this.state.filters['Year'];
+      const chosenOrg = this.state.filters['Organization'];
+      const chosenArea = this.state.filters['Focus Area'];
+      const yearCondition = chosenYear ? chosenYear === this.yearFrom(datum) : true;
+      const orgCondition = chosenOrg ? chosenOrg === datum['Organization Name'] : true;
+      const areaCondition = chosenArea ? chosenArea === datum['Focus Area'] : true;
+      return yearCondition && orgCondition && areaCondition;
+    });
 
-    // this.setState({ data: filteredData });
+    this.setState({ data: filteredData });
   }
 
-  yearFilter = () => {
-    console.log('hello from yearFilter');
+  yearFrom = (datum) => {
+    return datum["Date"].match(/\d+/)[0];
   }
-
-  organizationFilter = () => {
-    console.log('hello from organizationFilter');
-  }
-
-
-  // filterByYear = (year) => {
-  //   // const filteredData = this.state.data.filter(datum => {
-  //   const filteredData = this.allData.filter(datum => {
-  //     return this.matchYear(datum, year);
-  //   });
-  //   this.setState({ data: filteredData });
-  // }
-
-  // matchYear = (datum, year) => {
-  //   const datumYear = datum["Date"].match(/\d+/)[0];
-  //   return datumYear === year;
-  // }
 
   render() {
-    console.log('this.state.filters:',this.state.filters)
-
     return (
       <div className='App'>
         <header className='App-header'>
