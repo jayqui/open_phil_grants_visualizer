@@ -1,37 +1,45 @@
 import React, { Component } from 'react';
-import FilterSelect from './FilterSelect';
+import { Select } from 'semantic-ui-react';
 
 class FiltersPanel extends Component {
   distinctFocusAreas = () => {
-    return [...new Set(this.props.data
+    return [...new Set(this.props.allData
       .map(datum => datum["Focus Area"]))]
       .sort();
   }
   distinctYears = () => {
-    return [...new Set(this.props.data
+    return [...new Set(this.props.allData
       .map(datum => datum["Date"].match(/(\d+)\/(\d+)/)[1]))]
       .sort((a, b) => b - a);
   }
   distinctOrgs = () => {
-    return [...new Set(this.props.data
+    return [...new Set(this.props.allData
       .map(datum => datum["Organization Name"].trim()))]
       .sort();
+  }
+
+  filterBySelectedOption = (_value, text) => {
+    console.log(`you have chosen ${text.value} for ${text.placeholder}`);
+    if (text.placeholder === 'Year') { this.props.filterByYear(text.value); }
   }
 
   render() {
     return(
       <div>
-        <FilterSelect
+        <Select
           placeholder='Organization'
           options={this.distinctOrgs().map(item => ({ text: item, value: item }))}
+          onChange={this.filterBySelectedOption}
         />
-        <FilterSelect
-          placeholder='Year'
-          options={this.distinctYears().map(item => ({ text: item, value: item }))}
-        />
-        <FilterSelect
+        <Select
           placeholder='Focus Area'
           options={this.distinctFocusAreas().map(item => ({ text: item, value: item }))}
+          onChange={this.filterBySelectedOption}
+        />
+        <Select
+          placeholder='Year'
+          options={this.distinctYears().map(item => ({ text: item, value: item }))}
+          onChange={this.filterBySelectedOption}
         />
       </div>
     );

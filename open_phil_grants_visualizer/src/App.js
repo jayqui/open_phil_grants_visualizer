@@ -7,20 +7,25 @@ import SpinnerSection from './SpinnerSection';
 
 import './App.css'
 // BACKUP COPY FOR OFFLINE DEVELOPMENT USE
-// import grantsCsv from './grants_db.csv'
+import grantsCsv from './grants_db.csv'
 
 class App extends Component {
-  state = {
-    data: [],
+  constructor() {
+    super();
+    this.allData = [];
+    this.state = {
+      data: [],
+    };
+    this.filterByYear = this.filterByYear.bind(this);
   }
 
   componentDidMount() {
     // PRODUCTION PATH (CORS issue in dev)
     // const grantsDbUrl = 'https://www.openphilanthropy.org/giving/grants/spreadsheet';
     // PROXY PATH FOR DEVLEOPMENT
-    const grantsDbUrl = '/giving/grants/spreadsheet';
+    // const grantsDbUrl = '/giving/grants/spreadsheet';
     // BACKUP COPY FOR OFFLINE DEVELOPMENT USE
-    // const grantsDbUrl = grantsCsv;
+    const grantsDbUrl = grantsCsv;
 
     d3.csv(grantsDbUrl).then(dirtyData => {
       const data = dirtyData.map((datum => {
@@ -28,6 +33,7 @@ class App extends Component {
         datum['Amount'] = this.reformatAmount(datum['Amount']);
         return datum;
       }));
+      this.allData = data;
       this.setState({ data });
     });
   }
@@ -50,6 +56,19 @@ class App extends Component {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(subtotal);
   }
 
+  filterByYear = (year) => {
+    // const filteredData = this.state.data.filter(datum => {
+    const filteredData = this.allData.filter(datum => {
+      return this.matchYear(datum, year);
+    });
+    this.setState({ data: filteredData });
+  }
+
+  matchYear = (datum, year) => {
+    const datumYear = datum["Date"].match(/\d+/)[0];
+    return datumYear === year;
+  }
+
   render() {
     return (
       <div className='App'>
@@ -57,12 +76,15 @@ class App extends Component {
           <div>
             <h3>Grants count: {this.state.data.length}</h3>
             <h3>Grants total: {this.grantsTotal()}</h3>
-            <FiltersPanel data={this.state.data} />
+            <FiltersPanel
+              allData={this.allData}
+              filterByYear={this.filterByYear}
+            />
             {!this.state.data.length && <SpinnerSection />}
             <div>
               {this.state.data.length && <MaterialTable
                 title='Grants'
-                options={{ pageSize: 25, pageSizeOptions: [10, 25, 50, 100, this.state.data.length] }}
+                options={{ search: false, pageSize: 25, pageSizeOptions: [10, 25, 50, 100, this.state.data.length] }}
                 columns={[
                   { title: 'Grant Title', field: 'Grant' },
                   { title: 'Organization', field: 'Organization Name' },
