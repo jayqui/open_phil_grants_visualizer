@@ -19,8 +19,8 @@ class FiltersPanel extends Component {
   }
 
   filterBySelectedOption = (_value, text) => {
-    console.log(`you have chosen ${text.value} for ${text.placeholder}`);
-    if (text.placeholder === 'Year') { this.props.filterByYear(text.value); }
+    // console.log(`you have chosen ${text.value} for ${text.placeholder}`);
+    this.props.applyFilters(text.placeholder, text.value);
   }
 
   render() {

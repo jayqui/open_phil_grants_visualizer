@@ -15,8 +15,9 @@ class App extends Component {
     this.allData = [];
     this.state = {
       data: [],
+      filters: {}, // { Year: 2017, Organization: 'AI Impacts', ... }
     };
-    this.filterByYear = this.filterByYear.bind(this);
+    this.applyFilters = this.applyFilters.bind(this); // TODO: learn whether & why this is necessary
   }
 
   componentDidMount() {
@@ -56,20 +57,45 @@ class App extends Component {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(subtotal);
   }
 
-  filterByYear = (year) => {
-    // const filteredData = this.state.data.filter(datum => {
-    const filteredData = this.allData.filter(datum => {
-      return this.matchYear(datum, year);
-    });
-    this.setState({ data: filteredData });
+  applyFilters = (filterName, filterChoice) => {
+    const newFilters = Object.assign({}, this.state.filters);
+    newFilters[filterName] = filterChoice;
+    this.setState({ filters: newFilters }, this.executeFilters);
   }
 
-  matchYear = (datum, year) => {
-    const datumYear = datum["Date"].match(/\d+/)[0];
-    return datumYear === year;
+  executeFilters = () => {
+    for (key in this.state.filters) {
+      `${filterName.toLowerCase()}Filter`.call();
+    }
+
+    // this.setState({ data: filteredData });
   }
+
+  yearFilter = () => {
+    console.log('hello from yearFilter');
+  }
+
+  organizationFilter = () => {
+    console.log('hello from organizationFilter');
+  }
+
+
+  // filterByYear = (year) => {
+  //   // const filteredData = this.state.data.filter(datum => {
+  //   const filteredData = this.allData.filter(datum => {
+  //     return this.matchYear(datum, year);
+  //   });
+  //   this.setState({ data: filteredData });
+  // }
+
+  // matchYear = (datum, year) => {
+  //   const datumYear = datum["Date"].match(/\d+/)[0];
+  //   return datumYear === year;
+  // }
 
   render() {
+    console.log('this.state.filters:',this.state.filters)
+
     return (
       <div className='App'>
         <header className='App-header'>
@@ -78,7 +104,7 @@ class App extends Component {
             <h3>Grants total: {this.grantsTotal()}</h3>
             <FiltersPanel
               allData={this.allData}
-              filterByYear={this.filterByYear}
+              applyFilters={this.applyFilters}
             />
             {!this.state.data.length && <SpinnerSection />}
             <div>
