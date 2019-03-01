@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3-fetch';
-import MaterialTable from 'material-table';
 
 import FiltersPanel from './FiltersPanel';
 import SpinnerSection from './SpinnerSection';
+import DataTable from './DataTable';
 
 import './App.css'
 // BACKUP COPY FOR OFFLINE DEVELOPMENT USE
@@ -91,21 +91,7 @@ class App extends Component {
               allData={this.allData}
               applyFilters={this.applyFilters}
             />
-            {!this.state.data.length && <SpinnerSection />}
-            <div>
-              {this.state.data.length && <MaterialTable
-                title='Grants'
-                options={{ search: false, pageSize: 25, pageSizeOptions: [10, 25, 50, 100, this.state.data.length] }}
-                columns={[
-                  { title: 'Grant Title', field: 'Grant' },
-                  { title: 'Organization', field: 'Organization Name' },
-                  { title: 'Focus Area', field: 'Focus Area' },
-                  { title: 'Date', field: 'Date', type: 'date' },
-                  { title: 'Amount', field: 'Amount', type: 'currency' },
-                ]}
-                data={this.state.data}
-              />}
-            </div>
+            {this.state.data.length ? <DataTable data={this.state.data} /> : <SpinnerSection />}
           </div>
         </header>
       </div>
