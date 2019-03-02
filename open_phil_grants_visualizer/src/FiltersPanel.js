@@ -19,8 +19,12 @@ class FiltersPanel extends Component {
   }
 
   filterBySelectedOption = (_value, text) => {
-    // console.log(`you have chosen ${text.value} for ${text.placeholder}`);
     this.props.applyFilters(text.placeholder, text.value);
+  }
+
+  filterBySearch = (event) => {
+    event.preventDefault();
+    this.props.applyFilters('search', event.target.value);
   }
 
   render() {
@@ -41,6 +45,10 @@ class FiltersPanel extends Component {
           options={this.distinctYears().map(item => ({ text: item, value: item }))}
           onChange={this.filterBySelectedOption}
         />
+        <input
+          onChange={this.filterBySearch}
+          type='text'
+          placeholder='search' />
       </div>
     );
   }

@@ -70,7 +70,8 @@ class App extends Component {
       const yearCondition = chosenYear ? chosenYear === this.yearFrom(datum) : true;
       const orgCondition = chosenOrg ? chosenOrg === datum['Organization Name'] : true;
       const areaCondition = chosenArea ? chosenArea === datum['Focus Area'] : true;
-      return yearCondition && orgCondition && areaCondition;
+      const searchCondition = this.state.filters.search ? this.checkSearchMatch(datum) : true;
+      return yearCondition && orgCondition && areaCondition && searchCondition;
     });
 
     this.setState({ data: filteredData });
@@ -78,6 +79,14 @@ class App extends Component {
 
   yearFrom = (datum) => {
     return datum["Date"].match(/\d+/)[0];
+  }
+
+  checkSearchMatch = (datum) => {
+    const { search } = this.state.filters;
+    return datum['Date'].toLowerCase().match(search) ||
+      datum['Organization Name'].toLowerCase().match(search) ||
+      datum['Grant'].toLowerCase().match(search) ||
+      datum['Focus Area'].toLowerCase().match(search)
   }
 
   render() {
@@ -91,7 +100,7 @@ class App extends Component {
               allData={this.allData}
               applyFilters={this.applyFilters}
             />
-            {this.state.data.length ? <DataTable data={this.state.data} /> : <SpinnerSection />}
+            {this.allData.length ? <DataTable data={this.state.data} /> : <SpinnerSection />}
           </div>
         </header>
       </div>
