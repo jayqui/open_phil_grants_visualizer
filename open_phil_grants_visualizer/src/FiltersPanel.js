@@ -27,22 +27,29 @@ class FiltersPanel extends Component {
     this.props.applyFilters('search', event.target.value);
   }
 
+  prepareOptions(list) {
+    return [
+      { text: '', value: '' },
+      ...list.map(item => ({ text: item, value: item }))
+    ];
+  }
+
   render() {
     return(
       <div>
         <Select
           placeholder='Organization'
-          options={this.distinctOrgs().map(item => ({ text: item, value: item }))}
+          options={this.prepareOptions(this.distinctOrgs())}
           onChange={this.filterBySelectedOption}
         />
         <Select
           placeholder='Focus Area'
-          options={this.distinctFocusAreas().map(item => ({ text: item, value: item }))}
+          options={this.prepareOptions(this.distinctFocusAreas())}
           onChange={this.filterBySelectedOption}
         />
         <Select
           placeholder='Year'
-          options={this.distinctYears().map(item => ({ text: item, value: item }))}
+          options={this.prepareOptions(this.distinctYears())}
           onChange={this.filterBySelectedOption}
         />
         <Input
