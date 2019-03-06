@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Select } from 'semantic-ui-react';
+import { Select, Input } from 'semantic-ui-react';
 
 class FiltersPanel extends Component {
   distinctFocusAreas = () => {
@@ -45,7 +45,7 @@ class FiltersPanel extends Component {
           options={this.distinctYears().map(item => ({ text: item, value: item }))}
           onChange={this.filterBySelectedOption}
         />
-        <input
+        <Input
           onChange={this.filterBySearch}
           type='text'
           placeholder='search' />
