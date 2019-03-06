@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as d3 from 'd3-fetch';
 
 import FiltersPanel from './FiltersPanel';
+import FiltersMenuData from './FiltersMenuData';
 import SpinnerSection from './SpinnerSection';
 import DataTable from './DataTable';
 
@@ -13,6 +14,7 @@ class App extends Component {
   constructor() {
     super();
     this.allData = [];
+    this.filtersMenuData = [];
     this.state = {
       data: [],
       filters: {},
@@ -28,13 +30,14 @@ class App extends Component {
     const grantsDbUrl = grantsCsv;
 
     d3.csv(grantsDbUrl).then(dirtyData => {
-      const data = dirtyData.map((datum => {
+      const allData = dirtyData.map((datum => {
         datum['Date'] = this.reformatDate(datum['Date']);
         datum['Amount'] = this.reformatAmount(datum['Amount']);
         return datum;
       }));
-      this.allData = data;
-      this.setState({ data });
+      this.allData = allData;
+      this.filtersMenuData = new FiltersMenuData(allData).data;
+      this.setState({ data: allData });
     });
   }
 
@@ -98,6 +101,7 @@ class App extends Component {
             <h3>Grants total: {this.grantsTotal()}</h3>
             <FiltersPanel
               allData={this.allData}
+              filtersMenuData={this.filtersMenuData}
               applyFilters={this.applyFilters}
             />
             {this.allData.length ? <DataTable data={this.state.data} /> : <SpinnerSection />}
