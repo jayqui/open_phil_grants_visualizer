@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import drawPie from './drawPie';
 
-d3.csv('databasexls.csv', function(data) {
+d3.csv('database.csv', function(data) {
   const dataByFocusArea = _.groupBy(data, 'Focus Area');
 
   listDataByFocusArea(dataByFocusArea);
